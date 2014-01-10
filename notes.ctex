@@ -1,0 +1,95 @@
+
+TraIT: Translational Research IT project
+
+TTP: Trusted Third Party
+
+PIMS: Patient Identity Management System
+
+The core idea is that patient data is ``//pseudonymized//'' (e.g. anonymized but
+still distinguishable) by a third party: Custodix (though ``we'' e.g. Maastro
+could (perhaps `must'?) perform pseudonymization as well: it seems (to me) that
+this is even mandatory, as stated in the `vooronderzoek rapportage Mondriaan'
+(see sheet pdf#11)
+
+
+%\\ Apache CXF
+
+Apache CXF is an open source ``services framework''; it allows us to construct
+SOAP and REST interfaces. It is the recommended library by Custodix. It
+implements the (Java-standardized) JAX-WS API, and it supports WS-Trust:
+
+%|| cxf.apache.org/docs/ws-trust.html
+
+JAX-WS specification:
+
+%|| https://jcp.org/en/jsr/detail?id=224
+
+JAX-RS is a similar specification, but meant for REST interfaces:
+
+%|| https://jcp.org/en/jsr/detail?id=311
+
+
+
+%\\\ Interesting resources
+
+  -  [[url::http://www.jroller.com/gmazza/entry/web_service_tutorial]]
+
+%\\ SAML: Security Assertion Markup Language
+
+SAML is a ``//framework//'' for performing authentication (and related things
+like permissions and information about a user). The current version of the
+specification is 2.0; it is produced by the OASIS commitee.
+
+[[url::http://saml.xml.org/wiki/saml-introduction]] contains official
+documentation.
+
+[[url::http://saml.xml.org/wiki/saml-open-source-implementations]] contains
+a list of projects that implement SAML.
+
+http://saml.xml.org/
+
+
+%\\ Custodix STS web service
+
+The Custodix STS is compliant with the WS-Trust v1.4 specification.
+
+%|| https://ciam-dev-trait.custodix.com/sts/
+
+Three [[extension::wsdl]] files are downloaded and stored in my private
+[[project::TTPtools]] project. I attempted to convert then to java code (with
+the ``||cxf-codegen-plugin||'' plugin but that yields an error (when I tried
+to convert the ``STS'' WSDL):
+
+%|| (generate-sources) on project TTPtools: Non unique body parts!
+%||
+%|| In a port, operations must have unique operation signaure on the wire for
+%|| successful dispatch.
+%||
+%|| In port {http://docs.oasis-open.org/ws-sx/ws-trust/200512/}CustodixSTS,
+%|| Operations "{http://docs.oasis-open.org/ws-sx/ws-trust/200512/}Renew" and
+%||            "{http://docs.oasis-open.org/ws-sx/ws-trust/200512/}Issue" have
+%|| the same request body block
+%|| {http://docs.oasis-open.org/ws-sx/ws-trust/200512}RequestSecurityToken
+
+I found the following message in the ``cxf-users'' mailing list:
+
+  -  [[url::http://mail-archives.apache.org/mod_mbox/cxf-users/201301.mbox/%3C50E7031B.2000301@fernausoft.de%3E]]
+
+  -  [[url::http://mail-archives.apache.org/mod_mbox/cxf-users/201301.mbox/%3C3DA1F4E8-41AB-4EED-BE04-AE9F03FDC9F3@apache.org%3E]]
+
+  -  [[url::http://mail-archives.apache.org/mod_mbox/cxf-users/201301.mbox/%3C50E70E9F.5030909@fernausoft.de%3E]]
+
+The solution: I depended on CXF 2.2.3; I tried 2.7.8 and it worked: oops.
+
+
+%\\ Custodix PIMS web service
+
+%|| https://pims-dev-trait.custodix.com/pims/services/
+
+
+
+%\\ Groovy integration
+
+  -  [[utl::http://groovy.github.io/gmaven/]]
+
+  -  [[url::http://docs.codehaus.org/display/GROOVY/Groovy-Eclipse+compiler+plugin+for+Maven]]
