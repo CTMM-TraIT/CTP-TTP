@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wstrust="http://docs.oasis-open.org/ws-sx/ws-trust/200512/" xmlns:wst="http://docs.oasis-open.org/ws-sx/ws-trust/200512" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsap10="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:tns="http://docs.oasis-open.org/ws-sx/ws-trust/200512/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://docs.oasis-open.org/ws-sx/ws-trust/200512/">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wstrust="http://docs.oasis-open.org/ws-sx/ws-trust/200512/" xmlns:wst="http://docs.oasis-open.org/ws-sx/ws-trust/200512" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsap10="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:tns="http://docs.oasis-open.org/ws-sx/ws-trust/200512/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" elementFormDefault="qualified" targetNamespace="http://docs.oasis-open.org/ws-sx/ws-trust/200512">
+
+			<xs:element name="RequestSecurityToken" type="wst:AbstractRequestSecurityTokenType"/>
+			<xs:element name="RequestSecurityTokenResponse" type="wst:AbstractRequestSecurityTokenType"/>
+
+			<xs:complexType name="AbstractRequestSecurityTokenType">
+				<xs:sequence>
+					<xs:any maxOccurs="unbounded" minOccurs="0" namespace="##any" processContents="lax"/>
+				</xs:sequence>
+				<xs:attribute name="Context" type="xs:anyURI" use="optional"/>
+				<xs:anyAttribute namespace="##other" processContents="lax"/>
+			</xs:complexType>
+			<xs:element name="RequestSecurityTokenCollection" type="wst:RequestSecurityTokenCollectionType"/>
+			<xs:complexType name="RequestSecurityTokenCollectionType">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" minOccurs="2" name="RequestSecurityToken" type="wst:AbstractRequestSecurityTokenType"/>
+				</xs:sequence>
+			</xs:complexType>
+
+			<xs:element name="RequestSecurityTokenResponseCollection" type="wst:RequestSecurityTokenResponseCollectionType"/>
+			<xs:complexType name="RequestSecurityTokenResponseCollectionType">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" minOccurs="1" ref="wst:RequestSecurityTokenResponse"/>
+				</xs:sequence>
+				<xs:anyAttribute namespace="##other" processContents="lax"/>
+			</xs:complexType>
+
+		</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="RequestSecurityTokenResponseCollectionMsg">
+    <wsdl:part element="wst:RequestSecurityTokenResponseCollection" name="responseCollection">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="RequestSecurityTokenCollectionMsg">
+    <wsdl:part element="wst:RequestSecurityTokenCollection" name="requestCollection">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="RequestSecurityTokenResponseMsg">
+    <wsdl:part element="wst:RequestSecurityTokenResponse" name="response">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="RequestSecurityTokenMsg">
+    <wsdl:part element="wst:RequestSecurityToken" name="request">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="SecurityTokenResponseService">
+    <wsdl:operation name="RequestSecurityTokenResponse">
+      <wsdl:input message="wstrust:RequestSecurityTokenResponseMsg">
+    </wsdl:input>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="UTSTS">
+    <wsdl:operation name="Cancel">
+      <wsdl:input message="wstrust:RequestSecurityTokenMsg" wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Cancel">
+    </wsdl:input>
+      <wsdl:output message="wstrust:RequestSecurityTokenResponseMsg" wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RSTR/CancelFinal">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Issue">
+      <wsdl:input message="wstrust:RequestSecurityTokenMsg" wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Issue">
+    </wsdl:input>
+      <wsdl:output message="wstrust:RequestSecurityTokenResponseCollectionMsg" wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RSTRC/IssueFinal">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Renew">
+      <wsdl:input message="wstrust:RequestSecurityTokenMsg" wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Renew">
+    </wsdl:input>
+      <wsdl:output message="wstrust:RequestSecurityTokenResponseMsg" wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RSTR/RenewFinal">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Validate">
+      <wsdl:input message="wstrust:RequestSecurityTokenMsg" wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Validate">
+    </wsdl:input>
+      <wsdl:output message="wstrust:RequestSecurityTokenResponseMsg" wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RSTR/ValidateFinal">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="KeyExchangeToken">
+      <wsdl:input message="wstrust:RequestSecurityTokenMsg" wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/KET">
+    </wsdl:input>
+      <wsdl:output message="wstrust:RequestSecurityTokenResponseMsg" wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RSTR/KETFinal">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RequestCollection">
+      <wsdl:input message="wstrust:RequestSecurityTokenCollectionMsg">
+    </wsdl:input>
+      <wsdl:output message="wstrust:RequestSecurityTokenResponseCollectionMsg">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="WSSecurityRequestor">
+    <wsdl:operation name="Challenge">
+      <wsdl:input message="wstrust:RequestSecurityTokenResponseMsg">
+    </wsdl:input>
+      <wsdl:output message="wstrust:RequestSecurityTokenResponseMsg">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="CustodixUTBinding" type="wstrust:UTSTS">
+    <wsp:PolicyReference URI="#CustodixPolicy"/>
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Issue">
+      <soap:operation soapAction="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Issue"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Renew">
+      <wsdl:input wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Renew">
+      </wsdl:input>
+      <wsdl:output>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Validate">
+      <wsdl:input wsam:Action="http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Validate">
+      </wsdl:input>
+      <wsdl:output>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SecurityTokenService">
+    <wsdl:port binding="wstrust:CustodixUTBinding" name="CustodixUTSTS">
+      <soap:address location="https://ciam-dev-trait.custodix.com/sts/services/UTSTS"/>
+    </wsdl:port>
+  </wsdl:service>
+    <wsp:Policy wsu:Id="CustodixPolicy">
+		<wsp:ExactlyOne>
+			<wsp:All>
+				<wsap10:UsingAddressing/>
+				<sp:UsernameToken xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
+					<wsp:Policy>
+						<sp:WssUsernameToken10/>
+					</wsp:Policy>
+				</sp:UsernameToken>
+			</wsp:All>
+		</wsp:ExactlyOne>
+	</wsp:Policy>
+</wsdl:definitions>

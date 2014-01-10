@@ -1,0 +1,5 @@
+#!/bin/bash
+
+source common.sh
+
+java -cp "target/TTPtools-1.0-SNAPSHOT.jar${Sep}target/dependency-jars/*" nl.maastro.raymond.ttp.${scriptName} $@
