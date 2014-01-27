@@ -1,0 +1,824 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.custodix.com/MPI/1.0" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="PseudonymizationService" targetNamespace="http://www.custodix.com/MPI/1.0">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.custodix.com/MPI/1.0" xmlns:mpi="http://www.custodix.com/MPI/1.0" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.custodix.com/MPI/1.0">
+<xs:element name="linkingTableRequest" type="mpi:linkingTableRequest" />
+<xs:element name="pseudonymLinkingRequest" type="mpi:pseudonymLinkingRequest" />
+<xs:element name="pseudonymizationRequest" type="mpi:pseudonymizationRequest" />
+<xs:element name="reidentificationRequest" type="mpi:reidentificationRequest" />
+<xs:element name="reidentificationResponse" type="mpi:reidentificationResponse" />
+<xs:element name="source" nillable="true" type="xs:anyType" />
+<xs:element name="subject" type="mpi:subject" />
+<xs:element name="subjectExclusionResponse" type="mpi:subjectExclusionResponse" />
+<xs:complexType name="pseudonymizationRequest">
+<xs:complexContent>
+<xs:extension base="mpi:webServiceRequest">
+<xs:sequence>
+<xs:element minOccurs="0" name="realm" type="mpi:wsRealm" />
+<xs:element minOccurs="0" ref="mpi:source" />
+<xs:element maxOccurs="unbounded" minOccurs="0" ref="mpi:subject" />
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType abstract="true" name="webServiceRequest">
+<xs:sequence />
+</xs:complexType>
+<xs:simpleType name="wsRealm">
+<xs:restriction base="xs:string" />
+</xs:simpleType>
+<xs:complexType name="wsLogicalSourceId">
+<xs:simpleContent>
+<xs:extension base="xs:string">
+<xs:attribute ref="mpi:domain" />
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+<xs:complexType name="subject">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="address" type="mpi:wsAddress" />
+<xs:element maxOccurs="unbounded" minOccurs="0" name="attribute" type="mpi:wsAttribute" />
+<xs:element minOccurs="0" name="dateOfBirth" type="mpi:wsDateOfBirth" />
+<xs:element maxOccurs="unbounded" minOccurs="0" name="email" type="mpi:wsEmailAddress" />
+<xs:element minOccurs="0" name="ethnicOriginCode" type="xs:string" />
+<xs:element maxOccurs="unbounded" minOccurs="0" name="insuranceNumber" type="mpi:wsInsuranceNumber" />
+<xs:element maxOccurs="unbounded" minOccurs="0" name="maritalStatus" type="mpi:wsMaritalStatus" />
+<xs:element maxOccurs="unbounded" minOccurs="0" name="name" type="mpi:wsName" />
+<xs:element maxOccurs="unbounded" minOccurs="0" name="nationalIdentificationNumber" type="mpi:wsNationalIdentificationNumber" />
+<xs:element maxOccurs="unbounded" minOccurs="0" name="patientNumber" type="mpi:wsPatientNumber" />
+<xs:element maxOccurs="unbounded" minOccurs="0" name="phone" type="mpi:wsPhoneNumber" />
+<xs:element minOccurs="0" name="placeOfBirth" type="mpi:wsPlaceOfBirth" />
+<xs:element minOccurs="0" name="sex" type="xs:string" />
+</xs:sequence>
+<xs:attribute ref="mpi:sourceId" />
+<xs:attribute ref="mpi:timestamp" />
+</xs:complexType>
+<xs:complexType name="wsAddress">
+<xs:sequence>
+<xs:element minOccurs="0" name="addressLine1" type="xs:string" />
+<xs:element minOccurs="0" name="addressLine2" type="xs:string" />
+<xs:element minOccurs="0" name="addressLine3" type="xs:string" />
+<xs:element minOccurs="0" name="addressLine4" type="xs:string" />
+<xs:element minOccurs="0" name="addressLine5" type="xs:string" />
+<xs:element minOccurs="0" name="addressLine6" type="xs:string" />
+<xs:element minOccurs="0" name="city" type="xs:string" />
+<xs:element minOccurs="0" name="country" type="xs:string" />
+<xs:element minOccurs="0" name="full" type="xs:string" />
+<xs:element minOccurs="0" name="houseNumber" type="xs:string" />
+<xs:element minOccurs="0" name="mailbox" type="xs:string" />
+<xs:element minOccurs="0" name="region" type="xs:string" />
+<xs:element minOccurs="0" name="street" type="xs:string" />
+<xs:element maxOccurs="unbounded" minOccurs="0" name="postalCode" type="mpi:wsPostalCode" />
+</xs:sequence>
+<xs:attribute ref="mpi:timestamp" />
+</xs:complexType>
+<xs:complexType name="wsPostalCode">
+<xs:simpleContent>
+<xs:extension base="xs:string">
+<xs:attribute ref="mpi:type" />
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+<xs:complexType name="wsAttribute">
+<xs:simpleContent>
+<xs:extension base="mpi:persistentIdentificationNumber">
+<xs:attribute ref="mpi:name" />
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+<xs:complexType name="persistentIdentificationNumber">
+<xs:simpleContent>
+<xs:extension base="xs:string">
+<xs:attribute ref="mpi:domain" />
+<xs:attribute ref="mpi:timestamp" />
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+<xs:complexType name="wsDateOfBirth">
+<xs:sequence />
+<xs:attribute ref="mpi:day" />
+<xs:attribute ref="mpi:month" />
+<xs:attribute ref="mpi:year" />
+</xs:complexType>
+<xs:complexType name="wsEmailAddress">
+<xs:simpleContent>
+<xs:extension base="xs:string">
+<xs:attribute ref="mpi:timestamp" />
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+<xs:complexType name="wsInsuranceNumber">
+<xs:simpleContent>
+<xs:extension base="mpi:persistentIdentificationNumber" />
+</xs:simpleContent>
+</xs:complexType>
+<xs:complexType name="wsMaritalStatus">
+<xs:simpleContent>
+<xs:extension base="xs:string">
+<xs:attribute ref="mpi:timestamp" />
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+<xs:complexType name="wsName">
+<xs:sequence>
+<xs:element minOccurs="0" name="firstName" type="xs:string" />
+<xs:element maxOccurs="unbounded" minOccurs="0" name="fullName" type="mpi:wsFullName" />
+<xs:element minOccurs="0" name="initials" type="xs:string" />
+<xs:element maxOccurs="unbounded" minOccurs="0" name="lastName" type="mpi:wsLastName" />
+<xs:element minOccurs="0" name="maidenName" type="xs:string" />
+<xs:element maxOccurs="unbounded" minOccurs="0" name="middleName" type="mpi:wsMiddleName" />
+<xs:element maxOccurs="unbounded" minOccurs="0" name="nickName" type="mpi:wsNickName" />
+<xs:element maxOccurs="unbounded" minOccurs="0" name="title" type="mpi:wsTitle" />
+</xs:sequence>
+<xs:attribute ref="mpi:timestamp" />
+</xs:complexType>
+<xs:complexType name="wsFullName">
+<xs:simpleContent>
+<xs:extension base="xs:string">
+<xs:attribute ref="mpi:timestamp" />
+<xs:attribute name="type" type="mpi:nameType" />
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+<xs:complexType name="wsLastName">
+<xs:simpleContent>
+<xs:extension base="xs:string">
+<xs:attribute ref="mpi:prefix" />
+<xs:attribute ref="mpi:timestamp" />
+<xs:attribute name="type" type="mpi:nameType" />
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+<xs:simpleType name="wsMiddleName">
+<xs:restriction base="xs:string" />
+</xs:simpleType>
+<xs:simpleType name="wsNickName">
+<xs:restriction base="xs:string" />
+</xs:simpleType>
+<xs:complexType name="wsTitle">
+<xs:simpleContent>
+<xs:extension base="xs:string">
+<xs:attribute ref="mpi:timestamp" />
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+<xs:complexType name="wsNationalIdentificationNumber">
+<xs:simpleContent>
+<xs:extension base="mpi:persistentIdentificationNumber" />
+</xs:simpleContent>
+</xs:complexType>
+<xs:complexType name="wsPatientNumber">
+<xs:simpleContent>
+<xs:extension base="mpi:persistentIdentificationNumber" />
+</xs:simpleContent>
+</xs:complexType>
+<xs:complexType name="wsPhoneNumber">
+<xs:simpleContent>
+<xs:extension base="mpi:persistentIdentificationNumber">
+<xs:attribute name="type" type="mpi:phoneType" />
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+<xs:complexType name="wsPlaceOfBirth">
+<xs:simpleContent>
+<xs:extension base="xs:string">
+<xs:attribute ref="mpi:code" />
+<xs:attribute ref="mpi:domain" />
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+<xs:complexType name="pseudonymizationResponse">
+<xs:complexContent>
+<xs:extension base="mpi:webServiceResponse">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="linkedPseudonym" type="mpi:wsLinkedPseudonym" />
+<xs:element maxOccurs="unbounded" minOccurs="0" name="pseudonym" type="mpi:wsSourcePseudonym" />
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType abstract="true" name="webServiceResponse">
+<xs:sequence />
+<xs:attribute ref="mpi:responseId" />
+</xs:complexType>
+<xs:complexType name="wsLinkedPseudonym">
+<xs:simpleContent>
+<xs:extension base="mpi:wsPseudonym" />
+</xs:simpleContent>
+</xs:complexType>
+<xs:simpleType name="wsPseudonym">
+<xs:restriction base="xs:string" />
+</xs:simpleType>
+<xs:complexType name="wsSourcePseudonym">
+<xs:simpleContent>
+<xs:extension base="mpi:wsPseudonym">
+<xs:attribute ref="mpi:sourceId" />
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+<xs:complexType name="pseudonymLinkingRequest">
+<xs:complexContent>
+<xs:extension base="mpi:webServiceRequest">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="pseudonym" type="mpi:wsSourcePseudonym" />
+<xs:choice minOccurs="0">
+<xs:element name="researchProject" type="xs:string" />
+<xs:element name="catalogue" type="xs:string" />
+</xs:choice>
+</xs:sequence>
+<xs:attribute ref="mpi:linkingWeight" />
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="enrichmentRequest">
+<xs:complexContent>
+<xs:extension base="mpi:webServiceRequest">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="enrichmentRequestItem" type="mpi:enrichmentRequestItem" />
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="enrichmentRequestItem">
+<xs:sequence>
+<xs:element minOccurs="0" name="pseudonym" type="mpi:wsSourcePseudonym" />
+<xs:element minOccurs="0" name="realm" type="mpi:wsRealm" />
+<xs:element minOccurs="0" ref="mpi:subject" />
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="enrichmentResponse">
+<xs:complexContent>
+<xs:extension base="mpi:webServiceResponse">
+<xs:sequence />
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="subjectExclusionRequest">
+<xs:complexContent>
+<xs:extension base="mpi:webServiceRequest">
+<xs:sequence>
+<xs:element minOccurs="0" ref="mpi:subject" />
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="subjectExclusionResponse">
+<xs:complexContent>
+<xs:extension base="mpi:webServiceResponse">
+<xs:sequence />
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="reidentificationRequest">
+<xs:complexContent>
+<xs:extension base="mpi:webServiceRequest">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="pseudonym" type="mpi:wsSourcePseudonym" />
+<xs:element form="unqualified" minOccurs="0" name="reidentificationPurpose" type="mpi:reidentificationPurpose" />
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="reidentificationResponse">
+<xs:complexContent>
+<xs:extension base="mpi:webServiceResponse">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" ref="mpi:subject" />
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="linkingTableRequest">
+<xs:complexContent>
+<xs:extension base="mpi:webServiceRequest">
+<xs:sequence>
+<xs:element form="unqualified" minOccurs="0" name="reidentificationPurpose" type="mpi:reidentificationPurpose" />
+<xs:element maxOccurs="unbounded" minOccurs="0" name="source" type="mpi:wsSource" />
+<xs:element maxOccurs="unbounded" name="pseudonym" type="mpi:wsLinkedPseudonym" />
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="wsSource">
+<xs:sequence>
+<xs:element minOccurs="0" name="description" type="xs:string" />
+<xs:element minOccurs="0" name="name" type="xs:string" />
+<xs:element maxOccurs="unbounded" minOccurs="0" name="sourceId" type="mpi:wsLogicalSourceId" />
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="linkingTableResponse">
+<xs:complexContent>
+<xs:extension base="mpi:webServiceResponse">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="linkingTableEntry" type="mpi:linkingTableEntry" />
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="linkingTableEntry">
+<xs:sequence>
+<xs:element minOccurs="0" name="linkedPseudonym" type="mpi:wsLinkedPseudonym" />
+<xs:element maxOccurs="unbounded" minOccurs="0" name="sourcePseudonym" type="mpi:wsSourcePseudonym" />
+</xs:sequence>
+<xs:attribute name="source" type="xs:string" />
+</xs:complexType>
+<xs:simpleType name="nameType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="UNKNOWN" />
+<xs:enumeration value="GIVEN" />
+<xs:enumeration value="MARITAL" />
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="phoneType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="UNKNOWN" />
+<xs:enumeration value="HOME" />
+<xs:enumeration value="WORK" />
+<xs:enumeration value="MOBILE" />
+<xs:enumeration value="FAX" />
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="reidentificationPurpose">
+<xs:restriction base="xs:string">
+<xs:enumeration value="UNSPECIFIED" />
+<xs:enumeration value="DATA_INTEGRITY_VERIFICATION" />
+<xs:enumeration value="DATA_DUPLICATE_RECORD_VERIFICATION" />
+<xs:enumeration value="REQUEST_FOR_ADDITIONAL_DATA" />
+<xs:enumeration value="LINK_TO_SUPPLEMENTAL_INFORMATION_VARIABLES" />
+<xs:enumeration value="COMPLIANCE_AUDIT" />
+<xs:enumeration value="COMMUNICATE_SIGNIFICANT_FINDINGS" />
+<xs:enumeration value="FOLLOW_UP_RESEARCH" />
+<xs:enumeration value="OTHER" />
+</xs:restriction>
+</xs:simpleType>
+<xs:attribute name="code" type="xs:string" />
+<xs:attribute name="day" type="xs:string" />
+<xs:attribute name="domain" type="xs:string" />
+<xs:attribute name="linkingWeight" type="xs:double" />
+<xs:attribute name="month" type="xs:string" />
+<xs:attribute name="name" type="xs:string" />
+<xs:attribute name="prefix" type="xs:string" />
+<xs:attribute name="responseId" type="xs:string" />
+<xs:attribute name="sourceId" type="xs:string" />
+<xs:attribute name="timestamp" type="xs:dateTime" />
+<xs:attribute name="type" type="xs:string" />
+<xs:attribute name="year" type="xs:string" />
+<xs:element name="DataValidationException" type="mpi:DataValidationException" />
+<xs:complexType name="DataValidationException">
+<xs:sequence>
+<xs:element name="message" nillable="true" type="xs:string" />
+</xs:sequence>
+</xs:complexType>
+<xs:element name="InternalError" type="mpi:InternalError" />
+<xs:complexType name="InternalError">
+<xs:sequence />
+</xs:complexType>
+<xs:element name="AccessDeniedException" type="mpi:AccessDeniedException" />
+<xs:complexType name="AccessDeniedException">
+<xs:sequence>
+<xs:element name="message" nillable="true" type="xs:string" />
+<xs:element name="localizedMessage" nillable="true" type="xs:string" />
+</xs:sequence>
+</xs:complexType>
+<xs:element name="NoSuchResearchProjectException" type="mpi:NoSuchResearchProjectException" />
+<xs:complexType name="NoSuchResearchProjectException">
+<xs:sequence>
+<xs:element name="localizedMessage" nillable="true" type="xs:string" />
+<xs:element name="message" nillable="true" type="xs:string" />
+<xs:element name="researchProjectName" nillable="true" type="xs:string" />
+</xs:sequence>
+</xs:complexType>
+<xs:element name="NoSuchPseudonymException" type="mpi:NoSuchPseudonymException" />
+<xs:complexType name="NoSuchPseudonymException">
+<xs:sequence>
+<xs:element name="message" nillable="true" type="xs:string" />
+<xs:element name="pseudonym" nillable="true" type="xs:string" />
+<xs:element name="localizedMessage" nillable="true" type="xs:string" />
+</xs:sequence>
+</xs:complexType>
+<xs:element name="NoSuchSourceException" type="mpi:NoSuchSourceException" />
+<xs:complexType name="NoSuchSourceException">
+<xs:sequence>
+<xs:element name="source" nillable="true" type="xs:string" />
+<xs:element name="message" nillable="true" type="xs:string" />
+</xs:sequence>
+</xs:complexType>
+<xs:element name="requestPseudonyms" nillable="true" type="mpi:pseudonymizationRequest" />
+<xs:element name="requestPseudonymsResponse" nillable="true" type="mpi:pseudonymizationResponse" />
+<xs:element name="linkPseudonyms" nillable="true" type="mpi:pseudonymLinkingRequest" />
+<xs:element name="linkPseudonymsResponse" nillable="true" type="mpi:pseudonymizationResponse" />
+<xs:element name="enrich" nillable="true" type="mpi:enrichmentRequest" />
+<xs:element name="enrichResponse" nillable="true" type="mpi:enrichmentResponse" />
+<xs:element name="excludeSubject" nillable="true" type="mpi:subjectExclusionRequest" />
+<xs:element name="excludeSubjectResponse" nillable="true" type="mpi:subjectExclusionResponse" />
+<xs:element name="reidentify" nillable="true" type="mpi:reidentificationRequest" />
+<xs:element name="reidentifyResponse" nillable="true" type="mpi:reidentificationResponse" />
+<xs:element name="requestLinkingTable" nillable="true" type="mpi:linkingTableRequest" />
+<xs:element name="requestLinkingTableResponse" nillable="true" type="mpi:linkingTableResponse" />
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="enrichResponse">
+    <wsdl:part element="tns:enrichResponse" name="enrichResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="reidentify">
+    <wsdl:part element="tns:reidentify" name="reidentify">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="InternalError">
+    <wsdl:part element="tns:InternalError" name="InternalError">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="enrich">
+    <wsdl:part element="tns:enrich" name="enrich">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="NoSuchResearchProjectException">
+    <wsdl:part element="tns:NoSuchResearchProjectException" name="NoSuchResearchProjectException">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="requestPseudonyms">
+    <wsdl:part element="tns:requestPseudonyms" name="requestPseudonyms">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="requestLinkingTable">
+    <wsdl:part element="tns:requestLinkingTable" name="requestLinkingTable">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="requestPseudonymsResponse">
+    <wsdl:part element="tns:requestPseudonymsResponse" name="requestPseudonymsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="excludeSubjectResponse">
+    <wsdl:part element="tns:excludeSubjectResponse" name="excludeSubjectResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="reidentifyResponse">
+    <wsdl:part element="tns:reidentifyResponse" name="reidentifyResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="linkPseudonyms">
+    <wsdl:part element="tns:linkPseudonyms" name="linkPseudonyms">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="AccessDeniedException">
+    <wsdl:part element="tns:AccessDeniedException" name="AccessDeniedException">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="DataValidationException">
+    <wsdl:part element="tns:DataValidationException" name="DataValidationException">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="NoSuchPseudonymException">
+    <wsdl:part element="tns:NoSuchPseudonymException" name="NoSuchPseudonymException">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="requestLinkingTableResponse">
+    <wsdl:part element="tns:requestLinkingTableResponse" name="requestLinkingTableResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="excludeSubject">
+    <wsdl:part element="tns:excludeSubject" name="excludeSubject">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="NoSuchSourceException">
+    <wsdl:part element="tns:NoSuchSourceException" name="NoSuchSourceException">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="linkPseudonymsResponse">
+    <wsdl:part element="tns:linkPseudonymsResponse" name="linkPseudonymsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="PseudonymizationService">
+    <wsdl:operation name="requestPseudonyms">
+      <wsdl:input message="tns:requestPseudonyms" name="requestPseudonyms">
+    </wsdl:input>
+      <wsdl:output message="tns:requestPseudonymsResponse" name="requestPseudonymsResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:DataValidationException" name="DataValidationException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:AccessDeniedException" name="AccessDeniedException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:InternalError" name="InternalError">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="linkPseudonyms">
+      <wsdl:input message="tns:linkPseudonyms" name="linkPseudonyms">
+    </wsdl:input>
+      <wsdl:output message="tns:linkPseudonymsResponse" name="linkPseudonymsResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:NoSuchPseudonymException" name="NoSuchPseudonymException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:DataValidationException" name="DataValidationException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:NoSuchResearchProjectException" name="NoSuchResearchProjectException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:AccessDeniedException" name="AccessDeniedException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:InternalError" name="InternalError">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="enrich">
+      <wsdl:input message="tns:enrich" name="enrich">
+    </wsdl:input>
+      <wsdl:output message="tns:enrichResponse" name="enrichResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:NoSuchPseudonymException" name="NoSuchPseudonymException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:DataValidationException" name="DataValidationException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:AccessDeniedException" name="AccessDeniedException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:InternalError" name="InternalError">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="excludeSubject">
+      <wsdl:input message="tns:excludeSubject" name="excludeSubject">
+    </wsdl:input>
+      <wsdl:output message="tns:excludeSubjectResponse" name="excludeSubjectResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:DataValidationException" name="DataValidationException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:AccessDeniedException" name="AccessDeniedException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:InternalError" name="InternalError">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="reidentify">
+      <wsdl:input message="tns:reidentify" name="reidentify">
+    </wsdl:input>
+      <wsdl:output message="tns:reidentifyResponse" name="reidentifyResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:NoSuchPseudonymException" name="NoSuchPseudonymException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:DataValidationException" name="DataValidationException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:AccessDeniedException" name="AccessDeniedException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:InternalError" name="InternalError">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="requestLinkingTable">
+      <wsdl:input message="tns:requestLinkingTable" name="requestLinkingTable">
+    </wsdl:input>
+      <wsdl:output message="tns:requestLinkingTableResponse" name="requestLinkingTableResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:NoSuchSourceException" name="NoSuchSourceException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:NoSuchPseudonymException" name="NoSuchPseudonymException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:DataValidationException" name="DataValidationException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:NoSuchResearchProjectException" name="NoSuchResearchProjectException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:AccessDeniedException" name="AccessDeniedException">
+    </wsdl:fault>
+      <wsdl:fault message="tns:InternalError" name="InternalError">
+    </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="PseudonymizationServiceSoapBinding" type="tns:PseudonymizationService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsp:PolicyReference URI="#PimsBindingPolicy" />
+    <wsp:PolicyReference URI="#PimsBindingPolicy" />
+    <wsdl:operation name="requestPseudonyms">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="requestPseudonyms">
+        <soap:body use="literal" />
+    <wsp:PolicyReference URI="#PimsRequestPolicy" />
+      </wsdl:input>
+      <wsdl:output name="requestPseudonymsResponse">
+        <soap:body use="literal" />
+    <wsp:PolicyReference URI="#PimsResponsePolicy" />
+      </wsdl:output>
+      <wsdl:fault name="DataValidationException">
+        <soap:fault name="DataValidationException" use="literal" />
+      </wsdl:fault>
+      <wsdl:fault name="AccessDeniedException">
+        <soap:fault name="AccessDeniedException" use="literal" />
+      </wsdl:fault>
+      <wsdl:fault name="InternalError">
+        <soap:fault name="InternalError" use="literal" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="enrich">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="enrich">
+        <soap:body use="literal" />
+    <wsp:PolicyReference URI="#PimsRequestPolicy" />
+      </wsdl:input>
+      <wsdl:output name="enrichResponse">
+        <soap:body use="literal" />
+    <wsp:PolicyReference URI="#PimsResponsePolicy" />
+      </wsdl:output>
+      <wsdl:fault name="NoSuchPseudonymException">
+        <soap:fault name="NoSuchPseudonymException" use="literal" />
+      </wsdl:fault>
+      <wsdl:fault name="DataValidationException">
+        <soap:fault name="DataValidationException" use="literal" />
+      </wsdl:fault>
+      <wsdl:fault name="AccessDeniedException">
+        <soap:fault name="AccessDeniedException" use="literal" />
+      </wsdl:fault>
+      <wsdl:fault name="InternalError">
+        <soap:fault name="InternalError" use="literal" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="linkPseudonyms">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="linkPseudonyms">
+        <soap:body use="literal" />
+    <wsp:PolicyReference URI="#PimsRequestPolicy" />
+      </wsdl:input>
+      <wsdl:output name="linkPseudonymsResponse">
+        <soap:body use="literal" />
+    <wsp:PolicyReference URI="#PimsResponsePolicy" />
+      </wsdl:output>
+      <wsdl:fault name="NoSuchPseudonymException">
+        <soap:fault name="NoSuchPseudonymException" use="literal" />
+      </wsdl:fault>
+      <wsdl:fault name="DataValidationException">
+        <soap:fault name="DataValidationException" use="literal" />
+      </wsdl:fault>
+      <wsdl:fault name="NoSuchResearchProjectException">
+        <soap:fault name="NoSuchResearchProjectException" use="literal" />
+      </wsdl:fault>
+      <wsdl:fault name="AccessDeniedException">
+        <soap:fault name="AccessDeniedException" use="literal" />
+      </wsdl:fault>
+      <wsdl:fault name="InternalError">
+        <soap:fault name="InternalError" use="literal" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="excludeSubject">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="excludeSubject">
+        <soap:body use="literal" />
+    <wsp:PolicyReference URI="#PimsRequestPolicy" />
+      </wsdl:input>
+      <wsdl:output name="excludeSubjectResponse">
+        <soap:body use="literal" />
+    <wsp:PolicyReference URI="#PimsResponsePolicy" />
+      </wsdl:output>
+      <wsdl:fault name="DataValidationException">
+        <soap:fault name="DataValidationException" use="literal" />
+      </wsdl:fault>
+      <wsdl:fault name="AccessDeniedException">
+        <soap:fault name="AccessDeniedException" use="literal" />
+      </wsdl:fault>
+      <wsdl:fault name="InternalError">
+        <soap:fault name="InternalError" use="literal" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="reidentify">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="reidentify">
+        <soap:body use="literal" />
+    <wsp:PolicyReference URI="#PimsRequestPolicy" />
+      </wsdl:input>
+      <wsdl:output name="reidentifyResponse">
+        <soap:body use="literal" />
+    <wsp:PolicyReference URI="#PimsResponsePolicy" />
+      </wsdl:output>
+      <wsdl:fault name="NoSuchPseudonymException">
+        <soap:fault name="NoSuchPseudonymException" use="literal" />
+      </wsdl:fault>
+      <wsdl:fault name="DataValidationException">
+        <soap:fault name="DataValidationException" use="literal" />
+      </wsdl:fault>
+      <wsdl:fault name="AccessDeniedException">
+        <soap:fault name="AccessDeniedException" use="literal" />
+      </wsdl:fault>
+      <wsdl:fault name="InternalError">
+        <soap:fault name="InternalError" use="literal" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="requestLinkingTable">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="requestLinkingTable">
+        <soap:body use="literal" />
+    <wsp:PolicyReference URI="#PimsRequestPolicy" />
+      </wsdl:input>
+      <wsdl:output name="requestLinkingTableResponse">
+        <soap:body use="literal" />
+    <wsp:PolicyReference URI="#PimsResponsePolicy" />
+      </wsdl:output>
+      <wsdl:fault name="NoSuchSourceException">
+        <soap:fault name="NoSuchSourceException" use="literal" />
+      </wsdl:fault>
+      <wsdl:fault name="NoSuchPseudonymException">
+        <soap:fault name="NoSuchPseudonymException" use="literal" />
+      </wsdl:fault>
+      <wsdl:fault name="DataValidationException">
+        <soap:fault name="DataValidationException" use="literal" />
+      </wsdl:fault>
+      <wsdl:fault name="NoSuchResearchProjectException">
+        <soap:fault name="NoSuchResearchProjectException" use="literal" />
+      </wsdl:fault>
+      <wsdl:fault name="AccessDeniedException">
+        <soap:fault name="AccessDeniedException" use="literal" />
+      </wsdl:fault>
+      <wsdl:fault name="InternalError">
+        <soap:fault name="InternalError" use="literal" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="PseudonymizationService">
+    <wsdl:port binding="tns:PseudonymizationServiceSoapBinding" name="PseudonymizationServicePort">
+      <soap:address location="https://pims-dev-trait.custodix.com/pims/services/PseudonymizationService" />
+    </wsdl:port>
+  </wsdl:service>
+    <wsp:Policy xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsaw="http://www.w3.org/2005/08/addressing" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:t="http://docs.oasis-open.org/ws-sx/ws-trust/200512" xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="PimsBindingPolicy">
+	<wsp:ExactlyOne>
+		<wsp:All>
+			<sp:TransportBinding>
+				<wsp:Policy>
+					<sp:TransportToken>
+						<wsp:Policy>
+							<sp:HttpsToken RequireClientCertificate="false">
+								<wsp:Policy />
+							</sp:HttpsToken>
+						</wsp:Policy>
+					</sp:TransportToken>
+					<sp:AlgorithmSuite>
+						<wsp:Policy>
+							<sp:Basic128 />
+						</wsp:Policy>
+					</sp:AlgorithmSuite>
+					<sp:Layout>
+						<wsp:Policy>
+							<sp:Lax />
+						</wsp:Policy>
+					</sp:Layout>
+					<sp:IncludeTimestamp />
+				</wsp:Policy>
+			</sp:TransportBinding>
+			<sp:SupportingTokens>
+				<wsp:Policy>
+					<sp:IssuedToken sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
+						<sp:RequestSecurityTokenTemplate>
+							<t:TokenType>urn:oasis:names:tc:SAML:2.0:assertion</t:TokenType>
+							<t:KeyType>http://docs.oasis-open.org/ws-sx/ws-trust/200512/Bearer</t:KeyType>
+							<t:KeySize>128</t:KeySize>
+						</sp:RequestSecurityTokenTemplate>
+						<wsp:Policy>
+							<sp:RequireInternalReference />
+						</wsp:Policy>
+					</sp:IssuedToken>
+				</wsp:Policy>
+			</sp:SupportingTokens>
+			<sp:Wss11>
+				<wsp:Policy>
+					<sp:MustSupportRefIssuerSerial />
+					<sp:MustSupportRefThumbprint />
+					<sp:MustSupportRefEncryptedKey />
+				</wsp:Policy>
+			</sp:Wss11>
+			<sp:Trust13>
+				<wsp:Policy>
+					<sp:MustSupportIssuedTokens />
+					<sp:RequireClientEntropy />
+					<sp:RequireServerEntropy />
+				</wsp:Policy>
+			</sp:Trust13>
+		</wsp:All>
+	</wsp:ExactlyOne>
+</wsp:Policy>
+    <wsp:Policy xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="PimsRequestPolicy">
+	<wsp:ExactlyOne>
+		<wsp:All>
+			<!--sp:EncryptedParts>
+				<sp:Body/>
+			</sp:EncryptedParts-->
+			<sp:SignedParts>
+				<sp:Body />
+				<sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing" />
+				<sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing" />
+				<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
+				<sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing" />
+				<sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing" />
+				<sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing" />
+				<sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing" />
+			</sp:SignedParts>
+		</wsp:All>
+	</wsp:ExactlyOne>
+</wsp:Policy>
+    <wsp:Policy xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="PimsResponsePolicy">
+	<wsp:ExactlyOne>
+		<wsp:All>
+			<!--sp:EncryptedParts>
+				<sp:Body/>
+			</sp:EncryptedParts-->
+			<sp:SignedParts>
+				<sp:Body />
+				<sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing" />
+				<sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing" />
+				<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
+				<sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing" />
+				<sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing" />
+				<sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing" />
+				<sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing" />
+			</sp:SignedParts>
+		</wsp:All>
+	</wsp:ExactlyOne>
+</wsp:Policy>
+</wsdl:definitions>

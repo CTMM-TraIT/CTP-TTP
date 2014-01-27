@@ -3,7 +3,11 @@ TraIT: Translational Research IT project
 
 TTP: Trusted Third Party
 
+CTP: Clinical Trial Processor
+
 PIMS: Patient Identity Management System
+
+MIRC: Medical Imaging Resource Center
 
 The core idea is that patient data is ``//pseudonymized//'' (e.g. anonymized but
 still distinguishable) by a third party: Custodix (though ``we'' e.g. Maastro
@@ -11,6 +15,11 @@ could (perhaps `must'?) perform pseudonymization as well: it seems (to me) that
 this is even mandatory, as stated in the `vooronderzoek rapportage Mondriaan'
 (see sheet pdf#11)
 
+The system is build around two main components:
+
+  -  CIAM (STS) is used for authentication and authorization,
+
+  -  PIMS is the TTP system itself.
 
 %\\ Apache CXF
 
@@ -27,6 +36,85 @@ JAX-WS specification:
 JAX-RS is a similar specification, but meant for REST interfaces:
 
 %|| https://jcp.org/en/jsr/detail?id=311
+
+
+
+%\\\ Dealing with [[extension::jks]] files
+
+When I requested access to the TTP, I got a [[extension::jks]] file which would
+contain a private key and a certificate. JKS is the acronym for ``Java Key
+Store''. The [[program::keytool]] program, which should be part of your Java
+SDK installation, enables you to deal with such key stores:
+
+%|| $ keytool -list
+%|| keytool error: java.lang.Exception:
+%||     Keystore file does not exist: C:\Users\raymond.dresens\.keystore
+
+Note that the key store password is ``||changeit||'':
+
+%|| $ keytool -list -keystore store.jks
+%|| Enter keystore password: {{changeit}}
+%||
+%|| Keystore type: JKS
+%|| Keystore provider: SUN
+%|| 
+%|| Your keystore contains 2 entries
+%||
+%|| trait test ca 2014, 22-jan-2014, trustedCertEntry,
+%|| Certificate fingerprint (SHA1):
+%||     80:2B:91:32:64:EB:99:32:89:04:FD:57:C5:CE:E8:49:2B:B5:39:0E
+%|| submittingsite1service, 22-jan-2014, PrivateKeyEntry,
+%|| Certificate fingerprint (SHA1):
+%||     8F:DA:9E:6B:78:96:BB:F8:EB:07:6D:6F:33:88:51:84:13:3A:9C:E3
+
+Extracting the private key from the [[extension::jks]] file can be done like
+this:
+
+%|| keytool -importkeystore \
+%||      -srckeystore store.jks \
+%||      -srcalias submittingsite1service \
+%||     -destkeystore private-key.pfx -deststoretype PKCS12
+
+The following interaction is expected:
+
+%|| Enter destination keystore password:  {{changeit}}
+%|| Re-enter new password: {{changeit}}
+%|| Enter source keystore password:  {{changeit}}
+
+converting e.g. exporting the private key from [[file::private-key.pfx]] can be
+done like this:
+
+%|| openssl pkcs12 -in private-key.pfx -nocerts -nodes -out private-key.pem
+
+The [[option::openssl,-nodes]] option is the ``no DES'' option; it prevents
+[[program::openssl]] to encrypt the key to the output.
+
+There's a certificate to extract as well:
+
+%|| openssl pkcs12 -in private-key.pfx -nokeys -out certificate.pem
+
+\ldots{}there's a certificate authority certificate (cacert) to extract from
+the original key store as well:
+
+%|| keytool -import
+
+
+
+
+
+%\\\ Using the certificate and private key
+
+A ``plain'' [[program::curl]] invocation won't do:
+
+%|| curl https://ciam-dev-trait.custodix.com/sts/services/X509STS
+%|| ... <faultstring>No certificate indentifier found</faultstring> ...
+
+The question is: can we make it work with the private key and the certificates
+that we exported earlier?
+
+
+%|| curl -v -k https://ciam-dev-trait.custodix.com/sts/services/X509STS \
+        --cert certificate.pem --key private-key.pem
 
 
 
@@ -55,6 +143,13 @@ The Custodix STS is compliant with the WS-Trust v1.4 specification.
 
 %|| https://ciam-dev-trait.custodix.com/sts/
 
+Actual SOAP/XML services:
+
+%|| https://ciam-dev-trait.custodix.com/sts/services/STS
+
+%|| https://ciam-dev-trait.custodix.com/sts/services/X509STS
+
+
 Three [[extension::wsdl]] files are downloaded and stored in my private
 [[project::TTPtools]] project. I attempted to convert then to java code (with
 the ``||cxf-codegen-plugin||'' plugin but that yields an error (when I tried
@@ -82,14 +177,56 @@ I found the following message in the ``cxf-users'' mailing list:
 The solution: I depended on CXF 2.2.3; I tried 2.7.8 and it worked: oops.
 
 
+
+6310daba-7f95-45cd-85cf-dc557178edc8
+
+
 %\\ Custodix PIMS web service
 
+WSDL ``index'' (publicly available):
+
 %|| https://pims-dev-trait.custodix.com/pims/services/
+
+For us relevant services:
+
+  -  PseudonymizationService
+
+     Allows issuing pseudonymization and reidentification requests.
+
+  -  RegistrationService
+
+     Allows registration of users, submitting sites and projects.
+
+Interface:
+
+%|| https://pims-dev-trait.custodix.com/pims/home.xhtml
+
+Actual SOAP/XML service:
+
+%|| https://pims-dev-trait.custodix.com/pims/services/AuditService
+
+Profile / account management (for ``you personally''):
+
+%|| https://ciam-dev-trait.custodix.com/idm
+
 
 
 
 %\\ Groovy integration
 
+Groovy is mentioned in the Custodix documentation. If it is really neccesary
+to use it (though it may be really helpful) is currently unknown.
+
   -  [[utl::http://groovy.github.io/gmaven/]]
 
   -  [[url::http://docs.codehaus.org/display/GROOVY/Groovy-Eclipse+compiler+plugin+for+Maven]]
+
+
+
+
+%\\ The Clinical Trial Processor (CTP)
+
+http://mircwiki.rsna.org/index.php?title=CTP-The_RSNA_Clinical_Trial_Processor
+
+http://mircwiki.rsna.org/index.php?title=CTP_Articles
+

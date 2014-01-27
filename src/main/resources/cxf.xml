@@ -12,30 +12,55 @@
  http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
  http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
+  <bean id="MyClientCallbackHandler"
+     class="nl.maastro.raymond.ttp.MyClientCallbackHandler" />
+
   <jaxws:client
       name="{http://www.custodix.com/MPI/1.0}PseudonymizationServicePort"
       createdFromAPI="true"
-      address="http://localhost:8080/pims/services/PseudonymizationService">
+      address="https://pims-dev-trait.custodix.com/pims/services/PseudonymizationService">
     <jaxws:properties>
       <entry key="ws-security.sts.client">
 	<bean class="org.apache.cxf.ws.security.trust.STSClient">
 	  <constructor-arg ref="cxf"/>
+
+ <!-- (from '20131209 TraIT TTP Technical Specifications v3.pdf')
+
+          <property name="wsdlLocation"
+                   value="http://localhost:8080/sts/STSService?wsdl"/> -->
+
 	  <property name="wsdlLocation"
-		   value="http://localhost:8080/sts/STSService?wsdl"/>
+		   value="https://ciam-dev-trait.custodix.com/sts/services/X509STS?wsdl"/>
+
+ <!-- (from '20131209 TraIT TTP Technical Specifications v3.pdf')
+
+          <property name="serviceName"
+                   value="{http://sts.custodix.com/}STSService"/> -->
+
 	  <property name="serviceName"
-		   value="{http://sts.custodix.com/}STSService"/>
+		   value="{http://docs.oasis-open.org/ws-sx/ws-trust/200512/}SecurityTokenService"/>
+
+<!-- (from '20131209 TraIT TTP Technical Specifications v3.pdf')
+
+          <property name="endpointName" 
+                   value="{http://sts.custodix.com/}ISTSService_Port"/> -->
+
 	  <property name="endpointName"
-		   value="{http://sts.custodix.com/}ISTSService_Port"/>
+		   value="https://ciam-dev-trait.custodix.com/sts/services/STS"/>
 	  <property name="properties">
 	    <map>
 	      <entry key="ws-security.signature.username"
-		    value="myKey"/>
+		   value="myKey"/>
+
 	      <entry key="ws-security.callback-handler"
-		   value="ClientCallbackHandler"/>
+		   value="MyClientCallbackHandler"/>
+
 	      <entry key="ws-security.signature.properties"
 		   value="clientKeystore.properties"/>
+
               <entry key="ws-security.encryption.properties"
-		     value="stsKeystore.properties"/>
+		   value="stsKeystore.properties"/>
+
               <entry key="ws-security.encryption.username"
 		   value="stsKey"/>
             </map>
