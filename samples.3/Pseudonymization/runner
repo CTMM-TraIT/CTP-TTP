@@ -1,0 +1,5 @@
+#!/bin/bash
+
+source common.sh
+
+java -cp "target/PseudonymizationSample-1.0-SNAPSHOT.jar${Sep}target/dependency-jars/*" com.custodix.${scriptName} $@

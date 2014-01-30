@@ -137,6 +137,8 @@ a list of projects that implement SAML.
 http://saml.xml.org/
 
 
+
+
 %\\ Custodix STS web service
 
 The Custodix STS is compliant with the WS-Trust v1.4 specification.
@@ -179,6 +181,8 @@ The solution: I depended on CXF 2.2.3; I tried 2.7.8 and it worked: oops.
 
 
 6310daba-7f95-45cd-85cf-dc557178edc8
+
+
 
 
 %\\ Custodix PIMS web service

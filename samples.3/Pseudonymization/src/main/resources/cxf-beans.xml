@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:cxf="http://cxf.apache.org/core" xmlns:p="http://cxf.apache.org/policy"
+	xsi:schemaLocation="http://cxf.apache.org/core
+            http://cxf.apache.org/schemas/core.xsd 
+            http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd 
+            http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+            http://cxf.apache.org/policy
+            http://cxf.apache.org/schemas/policy.xsd">
+            
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+	<!-- We want Spring to manage our bean, instantiate it using spring, this way the configuration is done for us -->
+	<bean class="com.custodix.PseudonymizationClient" id="client" />
+	
+	<!-- STS settings for the CXF client, the name should be of the form {<targetnamespace>}<port name>.sts-client,
+		this allows CXF to automatically use this configuration when calls are made -->
+	<bean class="org.apache.cxf.ws.security.trust.STSClient"
+		name="{http://www.custodix.com/MPI/1.0}PseudonymizationServicePort.sts-client"
+		abstract="true">
+
+
+		<property name="wsdlLocation" value="https://ciam-dev-trait.custodix.com/sts/services/X509STS?wsdl" /> 
+		<property name="endpointName" value="{http://docs.oasis-open.org/ws-sx/ws-trust/200512/}CustodixX509STS" /> 
+
+		<property name="sendKeyType" value="false" />
+
+		<property name="tokenType"
+			value="http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV2.0" />
+		<property name="properties">
+			<map>
+				<entry key="soap.no.validate.parts" value="true" />
+				<!-- Username/password, not used -->
+				<!--<entry key="ws-security.username" value="#{client.userName}" />
+				<entry key="ws-security.password" value="#{client.password}" />-->
+				
+				<!-- Callback handler for keystores -->
+				<entry key="ws-security.callback-handler" value="com.custodix.PasswordCallbackHandler" />
+				
+				<!-- Server certificate keystore -->
+				<entry key="ws-security.encryption.properties" value="resources/stsKeystore.properties" />
+				<entry key="ws-security.encryption.username" value="ciam-dev-trait.custodix.com" />
+				
+				<!-- Client keystore -->
+				<entry key="ws-security.signature.properties" value="#{client.keyConfig}" />
+				<entry key="ws-security.signature.username" value="#{client.keyName}" />
+
+			</map>
+		</property>
+	</bean>
+
+
+
+</beans>
