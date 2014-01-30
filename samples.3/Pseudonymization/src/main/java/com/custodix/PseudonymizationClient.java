@@ -1,13 +1,17 @@
 package com.custodix;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
 import com.custodix.mpi._1.PseudonymizationRequest;
@@ -145,8 +149,9 @@ public class PseudonymizationClient {
      * @throws AccessDeniedException
      * @throws MalformedURLException
      */
-    public PseudonymizationResponse doRequest(String bsn, String realm) throws InternalError, DataValidationException, AccessDeniedException, MalformedURLException {
-
+    public PseudonymizationResponse doRequest(String bsn, String realm)
+        throws InternalError, DataValidationException, AccessDeniedException, MalformedURLException
+    {
     	// Create the service
     	PseudonymizationService_Service service = new PseudonymizationService_Service(URI.create(ENDPOINT).toURL());
 		QName name = new QName("http://www.custodix.com/MPI/1.0","PseudonymizationServicePort");
@@ -172,54 +177,118 @@ public class PseudonymizationClient {
     }
     
     /**
+     * This method was created so that this sample can be easily hooked into other programs (like the CTP, the Clinical Trial
+     * Processor).
+     *
+     * @param BSN                         The "Burger Service Nummer" of the patient,
+     * 
+     * @param realm                       The Realm, which defines the TraIT "target collection" of patients.
+     * 
+     * @param clientKeyStoreProperties    A (relative or absolute) filename to the properties file that refers to the key store
+     *                                    (which would be part of the resources directory e.g. the class path of the runtime??)
+     *                                    
+     * @param aliasForKey                 The alias for the key you wish to use; it is an identifier that you can find by invoking
+     *                                    {@code keytool -list -keystore keystore.jks}, which lists all available keys and their
+     *                                    names.
+     *                       
+     * @throws FileNotFoundException      Will be thrown when the key store properties file cannot be found.
+     * 
+     * @throws AccessDeniedException      ...
+     *  
+     * @throws DataValidationException    ...
+     *  
+     * @throws InternalError              ...
+     *  
+     * @throws MalformedURLException      ...
+     */
+
+    List<String> getPseudonymForBSN(String BSN,
+			      			        String realm,
+			      			        String clientKeyStoreProperties,
+			      			        String aliasForKey)
+	    throws FileNotFoundException, MalformedURLException, InternalError, DataValidationException, AccessDeniedException
+    {
+	  // Get the configuration file, allow absolute and relative paths
+
+	    File file = new File(clientKeyStoreProperties);
+
+	    if (!file.exists())
+	    {
+	    	throw new FileNotFoundException(clientKeyStoreProperties);
+	    }
+
+	    setKeyConfig("file:///" + file.getAbsolutePath());
+		setKeyName(aliasForKey);
+			
+		PseudonymizationResponse response = doRequest(BSN, realm);
+			
+		ArrayList<String> pseudonyms = new ArrayList<String>();
+		
+	// The loop here implies that multiple pseudonyms can be returned? ...
+		
+		for (WsLinkedPseudonym pseudonym : response.getLinkedPseudonym())
+		{
+			pseudonyms.add(pseudonym.getValue());
+		}
+		
+		return pseudonyms;
+    }
+
+    /**
      * Sample main method
+     * 
+     * An example invocation (assuming that {@code ./PseudonymizationClient} is a small shell script that calls java with the
+     * proper classpath) that should work is:
+     * 
+     * {@code ./PseudonymizationClient 123212321 targetCollection1 src/main/resources/resources/clientKeystore.properties submittingsite1service}
+     * 
      * @param args
      */
-	public static void main(String[] args) {
-
-		if(args.length  != 4) {
+	public static void main(String[] args)
+	{
+		if(args.length  != 4)
+		{
 			System.out.println("Required arguments: BSN Realm keystore_config key_alias");
+
 			return;
 		}
 		
-		System.out.println("Initializing spring context");
-		// Load the application context
-		ApplicationContext ctx = new GenericXmlApplicationContext("resources/cxf-beans.xml");
-		
-		// Get the client
-		PseudonymizationClient client = (PseudonymizationClient) ctx.getBean("client");
-		
-		
-		try {
-			// Get the configuration file, allow absolute and relative paths
-			File file = new File(args[2]);
-			if(!file.exists()) {
-				System.out.println("File "+args[2]+" does not exist.");
-				return;
+		ApplicationContext applicationContext = new GenericXmlApplicationContext("resources/cxf-beans.xml");
+
+		PseudonymizationClient client = (PseudonymizationClient) applicationContext.getBean("client");
+
+		try
+		{
+			List<String> pseudonyms = client.getPseudonymForBSN(args[0], args[1], args[2], args[3]);
+			
+			System.out.printf("%d pseudonym(s)...\n\n", pseudonyms.size());
+			
+			for (String pseudonym : pseudonyms)
+			{
+				System.out.printf(" - %s\n", pseudonym);
 			}
-			
-			client.setKeyConfig("file:///"+file.getAbsolutePath());
-			client.setKeyName(args[3]);
-			
-			// Do the request
-			System.out.println("Sending request to server.");
-			PseudonymizationResponse response = client.doRequest(args[0], args[1]);
-			
-			// Get the response
-			System.out.println("Response: ");
-			for(WsLinkedPseudonym pseudonym : response.getLinkedPseudonym()) {
-				System.out.println(pseudonym.getValue());
-			}
-			
-		} catch (InternalError e) {
-			e.printStackTrace();
-		} catch (DataValidationException e) {
-			e.printStackTrace();
-		} catch (AccessDeniedException e) {
-			e.printStackTrace();
-		} catch (MalformedURLException e) {
+		}
+		catch (InternalError e)
+		{
 			e.printStackTrace();
 		}
-		
+		catch (DataValidationException e)
+		{
+			e.printStackTrace();
+		}
+		catch (AccessDeniedException e)
+		{
+			e.printStackTrace();
+		}
+		catch (MalformedURLException e)
+		{
+			e.printStackTrace();
+		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+
+		((AbstractApplicationContext) applicationContext).close();
 	}
 }

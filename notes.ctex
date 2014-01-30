@@ -21,6 +21,9 @@ The system is build around two main components:
 
   -  PIMS is the TTP system itself.
 
+
+
+
 %\\ Apache CXF
 
 Apache CXF is an open source ``services framework''; it allows us to construct
@@ -93,13 +96,6 @@ There's a certificate to extract as well:
 
 %|| openssl pkcs12 -in private-key.pfx -nokeys -out certificate.pem
 
-\ldots{}there's a certificate authority certificate (cacert) to extract from
-the original key store as well:
-
-%|| keytool -import
-
-
-
 
 
 %\\\ Using the certificate and private key
@@ -112,9 +108,10 @@ A ``plain'' [[program::curl]] invocation won't do:
 The question is: can we make it work with the private key and the certificates
 that we exported earlier?
 
-
 %|| curl -v -k https://ciam-dev-trait.custodix.com/sts/services/X509STS \
         --cert certificate.pem --key private-key.pem
+
+I wish! I get the same error, and I don't really understand why\ldots{}
 
 
 
@@ -122,24 +119,44 @@ that we exported earlier?
 
   -  [[url::http://www.jroller.com/gmazza/entry/web_service_tutorial]]
 
+
+
+
 %\\ SAML: Security Assertion Markup Language
 
 SAML is a ``//framework//'' for performing authentication (and related things
 like permissions and information about a user). The current version of the
 specification is 2.0; it is produced by the OASIS commitee.
 
-[[url::http://saml.xml.org/wiki/saml-introduction]] contains official
-documentation.
+Some ``place to be'' resource are\ldots{}
 
-[[url::http://saml.xml.org/wiki/saml-open-source-implementations]] contains
-a list of projects that implement SAML.
+  -  [[url::http://saml.xml.org/wiki/saml-introduction]] contains official documentation.
 
-http://saml.xml.org/
+  -  [[url::http://saml.xml.org/wiki/saml-open-source-implementations]] contains a list of projects that implement SAML.
+
+  -  [[url::http://saml.xml.org/]]
 
 
 
 
 %\\ Custodix STS web service
+
+%\\\ Using the example code
+
+%|| ./PseudonymizationClient \
+%||     123212321 \
+%||     targetCollection1 \
+%||     src/main/resources/resources/clientKeystore.properties \
+%||     submittingsite1service
+
+The [[file::clientKeystore.properties]] file, which is part of the resources
+directory, contains an actual reference to the key store file
+([[file::store.jks]]) but relative to the root of the classpath (as if it is
+loaded as a resource file).
+
+The [[file::stsKeystore.properties]] file is used to reference to the
+key store file ([[file::idp.jks]]) - this key store is (likely) neccesary for
+authentication (or the verification?) of the STS.
 
 The Custodix STS is compliant with the WS-Trust v1.4 specification.
 
@@ -151,6 +168,11 @@ Actual SOAP/XML services:
 
 %|| https://ciam-dev-trait.custodix.com/sts/services/X509STS
 
+
+
+%\\\ Issues
+
+%\\\\ Non-unique body parts (//solved//)
 
 Three [[extension::wsdl]] files are downloaded and stored in my private
 [[project::TTPtools]] project. I attempted to convert then to java code (with
@@ -193,15 +215,19 @@ WSDL ``index'' (publicly available):
 
 For us relevant services:
 
-  -  PseudonymizationService
+  -  **PseudonymizationService**
+
+     https://pims-dev-trait.custodix.com/pims/services/PseudonymizationService
 
      Allows issuing pseudonymization and reidentification requests.
 
-  -  RegistrationService
+  -  **RegistrationService**
+
+     https://pims-dev-trait.custodix.com/pims/services/RegistrationService
 
      Allows registration of users, submitting sites and projects.
 
-Interface:
+(Human web) interface:
 
 %|| https://pims-dev-trait.custodix.com/pims/home.xhtml
 
@@ -233,4 +259,3 @@ to use it (though it may be really helpful) is currently unknown.
 http://mircwiki.rsna.org/index.php?title=CTP-The_RSNA_Clinical_Trial_Processor
 
 http://mircwiki.rsna.org/index.php?title=CTP_Articles
-
