@@ -149,6 +149,8 @@ Some ``place to be'' resource are\ldots{}
 %||     src/main/resources/resources/clientKeystore.properties \
 %||     submittingsite1service
 
+You should get pseudonyms like ``||6310daba-7f95-45cd-85cf-dc557178edc8||''.
+
 The [[file::clientKeystore.properties]] file, which is part of the resources
 directory, contains an actual reference to the key store file
 ([[file::store.jks]]) but relative to the root of the classpath (as if it is
@@ -199,10 +201,6 @@ I found the following message in the ``cxf-users'' mailing list:
   -  [[url::http://mail-archives.apache.org/mod_mbox/cxf-users/201301.mbox/%3C50E70E9F.5030909@fernausoft.de%3E]]
 
 The solution: I depended on CXF 2.2.3; I tried 2.7.8 and it worked: oops.
-
-
-
-6310daba-7f95-45cd-85cf-dc557178edc8
 
 
 
@@ -259,3 +257,48 @@ to use it (though it may be really helpful) is currently unknown.
 http://mircwiki.rsna.org/index.php?title=CTP-The_RSNA_Clinical_Trial_Processor
 
 http://mircwiki.rsna.org/index.php?title=CTP_Articles
+
+The CTP can be compiled with the [[program::ant]] program. Compiling it yields
+an installation file ([[program::CTP-installer.jar]] in the [[dir::products/]]
+directory). Installing it yields a program ([[program::Runner.jar]]) that can
+be started like this:
+
+%|| java -jar Launcher.jar
+
+The resulting GUI allows you to start and stop de daemon that implements the
+web interface. The default web user interface credentials are: ``||admin||''
+for user name, ``||password||'' for password.
+
+[[file::ctpConfig/sedi_anonymizer/maastro/lookup.properties]] should contain
+the following entry:
+
+%|| ptid/SEDI_ANON.002=2222
+
+Such an entry is currently responsible for `anonymization'.
+
+Running a ``batch'': copy ``||SEDI_ANON.002||'' into the [[dir::import]]
+folder of the [[dir::CTP]] installation directory (which will exist after
+you run it for the first time - because the configuration will result in its
+creation).
+
+
+
+%\\\ CTP development notes
+
+The following command sequence is used for building and deploying:
+
+%|| ant
+%|| cd products; java -jar CTP-installer.jar
+
+I always installed it in the same directory (like [[path::C:\Java]]; the
+installer will create a [[dir::CTP]] directory for you)
+
+
+%\\\\ 
+
+The lookup table editor (which seems to be a frontend for a Java
+[[extension::properties]] file editor) allows you to perform
+``lookup substitutions''; during development, it contained an entry that
+replaced ``||ptid/SEDI_ANON.002||'' to ``||2222||''.
+
+The ``||lookup

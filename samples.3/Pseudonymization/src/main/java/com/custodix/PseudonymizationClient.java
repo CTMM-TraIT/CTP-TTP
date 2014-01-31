@@ -202,10 +202,11 @@ public class PseudonymizationClient {
      * @throws MalformedURLException      ...
      */
 
-    List<String> getPseudonymForBSN(String BSN,
-			      			        String realm,
-			      			        String clientKeyStoreProperties,
-			      			        String aliasForKey)
+    public List<String> getPseudonymForBSN(String BSN,
+    									   String realm,
+			      			               String clientKeyStoreProperties,
+			      			               String aliasForKey)
+
 	    throws FileNotFoundException, MalformedURLException, InternalError, DataValidationException, AccessDeniedException
     {
 	  // Get the configuration file, allow absolute and relative paths
@@ -235,13 +236,34 @@ public class PseudonymizationClient {
     }
 
     /**
+     * this class, together with all its dependencies, is currently intended to be bundled in a single .jar file. It is to be
+     * used with a (currently) non-Spring application. For simplicity's sake (and testing purposes), a static application context
+     * will be created in a static initializer block...
+     */
+
+    static ApplicationContext applicationContext;
+    
+    static
+    {
+    	applicationContext = new GenericXmlApplicationContext("resources/cxf-beans.xml");
+    	
+    	/* TODO :: but it won't be properly closed this way, if you include the class in another program that doesn't use the
+    	   static main function in this class... */
+    }
+
+    static public PseudonymizationClient getClient()
+    {
+    	return (PseudonymizationClient) applicationContext.getBean("client");
+    }
+
+    /**
      * Sample main method
-     * 
+     *
      * An example invocation (assuming that {@code ./PseudonymizationClient} is a small shell script that calls java with the
      * proper classpath) that should work is:
      * 
      * {@code ./PseudonymizationClient 123212321 targetCollection1 src/main/resources/resources/clientKeystore.properties submittingsite1service}
-     * 
+     *
      * @param args
      */
 	public static void main(String[] args)
@@ -253,9 +275,7 @@ public class PseudonymizationClient {
 			return;
 		}
 		
-		ApplicationContext applicationContext = new GenericXmlApplicationContext("resources/cxf-beans.xml");
-
-		PseudonymizationClient client = (PseudonymizationClient) applicationContext.getBean("client");
+		PseudonymizationClient client = getClient();
 
 		try
 		{
