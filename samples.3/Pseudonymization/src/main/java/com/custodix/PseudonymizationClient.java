@@ -31,12 +31,78 @@ import com.custodix.mpi._1_0.PseudonymizationService;
 import com.custodix.mpi._1_0.PseudonymizationService_Service;
 
 /**
- * Sample implementation of a pseudonymization client, can be used to get a pseudonym using BSN as an identifier
- * @author Jelle
+ * <p>
+ * This program began its life as a sample implementation of a <i>pseudonymization client</i>, which can be used to get a pseudonym
+ * by using a BSN ("civilian service number") as an identifier. The {@code PseudonymizationClient} class can also be incorporated
+ * in other programs (like the CTP, the Clinical Trial Processor) for requesting pseudonyms as well.
+ * </p>
+ * <p>
+ * Using this code, stand-alone or incorporated in a larger program, requires a "{@code ttpConfig}" configuration directory which
+ * is expected to be present in the current working directory (e.g. the installation directory of your program). This directory is
+ * expected to contain the following four files:
+ * <ul>
+ *   <li>
+ *     A <i>Java Key Store</i> ({@code .jks}) file, which could be named {@code store.jks}, which retains a private key (and
+ *     client certificate) for access to the Custodix TTP in general.
+ *   </li>
+ *   <li>
+ *     A <i>Java Key Store</i> ({@code .jks}) file, is expected to be named {@code idp.jks}, which retains credentials related to
+ *     STS access (is this so? This file was provided by us in the example; before receiving this example, I was not explicitly
+ *     aware that I needed this secondary key store though its accompanying properties file was mentioned in the documentation)
+ *   </li>
+ *   <li>
+ *     A file named {@code clientKeystore.properties}, which is expected to contain the following properties:
+ *     <ul>
+ *       <li>
+ *         {@code org.apache.ws.security.crypto.merlin.keystore.file}, which must refer to the <i>Java Key Store</i> ({@code .jks})
+ *         that retains a private key (and client certificate) for access to the Custodix TTP in general. Note that the value
+ *         of this property is expected to be a relative path that starts with "{@code ttpConfig/}"; an example value for this
+ *         property would be "{@code ttpConfig/store.jks}",
+ *       </li>
+ *       <li>
+ *         {@code org.apache.ws.security.crypto.merlin.keystore.password}, which must refer to the password that protects the
+ *         key store referred to with {@code org.apache.ws.security.crypto.merlin.keystore.file},
+ *       </li>
+ *       <li>
+ *         {@code org.apache.ws.security.crypto.merlin.keystore.type}, which is expected to be set to "{@code jks}"; it signifies
+ *         the keystore type,
+ *       </li>
+ *       <li>
+ *         {@code org.apache.ws.security.crypto.merlin.keystore.alias}, which must be set to the (account?) name of the
+ *         service; an example value for this property would be "{@code submittingsite1service}".
+ *       </li>
+ *     </ul>
+ *   </li>
+ *   <li>
+ *     A file named {@code stsKeystore.properties}, similar to the previously discussed properties file, which is expected to
+ *     (similarly) contain the following properties:
+ *     <ul>
+ *       <li>
+ *         {@code org.apache.ws.security.crypto.merlin.keystore.file}, which is expected to refer to "{@code ttpConfig/idp.jks}",
+ *       </li>
+ *       <li>
+ *         {@code org.apache.ws.security.crypto.merlin.keystore.password}, which must refer to the password that protects the
+ *         "{@code ttpConfig/idp.jks}" key store,
+ *       </li>
+ *       <li>
+ *         {@code org.apache.ws.security.crypto.merlin.keystore.type}, which is expected to be set to "{@code jks}"; it signifies
+ *         the keystore type,
+ *       </li>
+ *       <li>
+ *         {@code org.apache.ws.security.crypto.merlin.keystore.alias}, which is expected to be set to
+ *         "{@code ciam-dev-trait.custodix.com}". 
+ *       </li>
+ *     </ul>
+ *   </li>
+ * </ul>
+ * </p>
+ * 
+ * @author Jelle (original version)
+ * @author Raymond Dresens (altered version, some documentation & notes)
  *
  */
-public class PseudonymizationClient {
-	
+public class PseudonymizationClient
+{	
 	/// URL pointing to the WSDL location
     public final static URL WSDL_LOCATION;
 
@@ -64,84 +130,36 @@ public class PseudonymizationClient {
     /// Client keystore key alias
     private String keyName;
     
-    static {
+    static
+    {
         URL url = null;
-        try {
+        
+        try
+        {
             url = new URL("https://pims-dev-trait.custodix.com/pims/services/PseudonymizationService?wsdl");
-        } catch (MalformedURLException e) {
+        }
+        catch (MalformedURLException e)
+        {
             java.util.logging.Logger.getLogger(PseudonymizationClient.class.getName())
                 .log(java.util.logging.Level.INFO, 
                      "Can not initialize the default wsdl from {0}", ENDPOINT);
         }
+
         WSDL_LOCATION = url;
     }
     
-    public PseudonymizationClient() {
-	}
     
-    /**
-     * 
-     * @return
-     */
-    public  String getPassword() {
-		return password;
-	}
+    public String getPassword() { return password; }
+    public   void setPassword(String password) { this.password = password; }
     
-    /**
-     * 
-     * @param password
-     */
-    public  void setPassword(String password) {
-    	this.password = password;
-	}
+    public String getUserName() { return userName; }
+    public   void setUserName(String userName) { this.userName = userName; }
     
-    /**
-     * 
-     * @return
-     */
-    public  String getUserName() {
-		return userName;
-	}
-    
-    /**
-     * 
-     * @param userName
-     */
-    public  void setUserName(String userName) {
-    	this.userName = userName;
-	}
-    
-    /**
-     * 
-     * @return
-     */
-    public String getKeyConfig() {
-		return keyConfig;
-	}
-    
-    /**
-     * 
-     * @param keyConfig
-     */
-    public void setKeyConfig(String keyConfig) {
-		this.keyConfig = keyConfig;
-	}
-    
-    /**
-     * 
-     * @return
-     */
-    public String getKeyName() {
-		return keyName;
-	}
-    
-    /**
-     * 
-     * @param keyName
-     */
-    public void setKeyName(String keyName) {
-		this.keyName = keyName;
-	}
+    public String getKeyConfig() { return keyConfig; }
+    public   void setKeyConfig(String keyConfig) { this.keyConfig = keyConfig; }
+
+    public String getKeyName() { return keyName; }
+    public   void setKeyName(String keyName) { this.keyName = keyName; }
     
     /**
      * Do the pseudonymization request, request a pseudonym for a certain BSN in a certain realm
@@ -192,13 +210,22 @@ public class PseudonymizationClient {
     {
     	pseudonymCache.clear();
     }
-    
+
+    /**
+     * This small class allows us to cache pseudonyms returned from the Custodix TTP based on "time stamps". The general idea
+     * is that we wrap the list of pseudonyms together with a time stamp e.g. age of the pseudonyms... though you could wonder
+     * whether such a lifespan is really neccesary (shouldn't pseudonyms always remain the same?) 
+     * 
+     * @author raymond.dresens
+     */
+
     public class CachedPseudonyms
     {
     	private GregorianCalendar timestamp;
     	
     	private List<String> pseudonyms;
-    	
+
+
     	CachedPseudonyms(List<String> pseudonyms)
     	{
     		timestamp = new GregorianCalendar(); this.pseudonyms = pseudonyms;
