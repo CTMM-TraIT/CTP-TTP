@@ -6,6 +6,10 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -176,10 +180,60 @@ public class PseudonymizationClient {
 		return serv.requestPseudonyms(request);
 	
     }
+
+    static private HashMap<String, CachedPseudonyms> pseudonymCache;
+    
+    static
+    {
+    	pseudonymCache = new HashMap<String, CachedPseudonyms>();
+    }
+
+    public static void clearPseudonymCache()
+    {
+    	pseudonymCache.clear();
+    }
+    
+    public class CachedPseudonyms
+    {
+    	private GregorianCalendar timestamp;
+    	
+    	private List<String> pseudonyms;
+    	
+    	CachedPseudonyms(List<String> pseudonyms)
+    	{
+    		timestamp = new GregorianCalendar(); this.pseudonyms = pseudonyms;
+    	}
+
+
+    	boolean tooOld()
+    	{
+    		GregorianCalendar now = new GregorianCalendar();
+    		
+    		now.add(Calendar.MINUTE, -10); return timestamp.before(now);	
+    	}
+
+    	
+    	int numberOfPseudonyms()
+    	{
+    		return pseudonyms.size();
+    	}
+
+
+    	String getFirstPseudonym()
+    	{
+    		return pseudonyms.get(0);
+    	}
+    	
+    	
+    	List<String> getPseudonyms()
+    	{
+    		return Collections.unmodifiableList(pseudonyms);
+    	}
+    }
     
     /**
      * This method was created so that this sample can be easily hooked into other programs (like the CTP, the Clinical Trial
-     * Processor).
+     * Processor). Note that this method uses a pseudonym cache.
      *
      * @param BSN                         The "Burger Service Nummer" of the patient,
      * 
@@ -210,7 +264,21 @@ public class PseudonymizationClient {
 
 	    throws FileNotFoundException, MalformedURLException, InternalError, DataValidationException, AccessDeniedException
     {
-	  // Get the configuration file, allow absolute and relative paths
+    	if (pseudonymCache.containsKey(BSN))
+    	{
+    		CachedPseudonyms cachedPseudonyms = pseudonymCache.get(BSN);
+    		
+    		if (!cachedPseudonyms.tooOld())
+    		{
+    			return cachedPseudonyms.getPseudonyms();
+    		}
+    		else
+    		{
+    			pseudonymCache.remove(BSN);
+    		}
+    	}
+
+    // Get the configuration file, allow absolute and relative paths
 
 	    File file = new File(clientKeyStoreProperties);
 
@@ -232,6 +300,8 @@ public class PseudonymizationClient {
 		{
 			pseudonyms.add(pseudonym.getValue());
 		}
+
+		pseudonymCache.put(BSN, new CachedPseudonyms(pseudonyms));
 		
 		return pseudonyms;
     }
