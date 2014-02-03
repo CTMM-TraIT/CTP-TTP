@@ -40,9 +40,9 @@
 				
 				<!-- Callback handler for keystores -->
 				<entry key="ws-security.callback-handler" value="com.custodix.PasswordCallbackHandler" />
-				
+
 				<!-- Server certificate keystore -->
-				<entry key="ws-security.encryption.properties" value="resources/stsKeystore.properties" />
+				<entry key="ws-security.encryption.properties" value="file:ttpConfig/stsKeystore.properties" />
 				<entry key="ws-security.encryption.username" value="ciam-dev-trait.custodix.com" />
 				
 				<!-- Client keystore -->

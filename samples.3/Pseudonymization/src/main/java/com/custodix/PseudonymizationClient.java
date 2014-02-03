@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.apache.cxf.Bus;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
@@ -266,8 +267,37 @@ public class PseudonymizationClient {
      *
      * @param args
      */
+        
+    
 	public static void main(String[] args)
 	{
+		/*
+		if (args.length < 1)
+		{
+			System.exit(0);
+		}
+		
+		URL wsdl = null;
+		try {
+			wsdl = new URL(args[0]);
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+        System.out.println(wsdl.getFile());
+
+        if (new File(wsdl.getFile()).isFile())
+        {
+            System.out.println("Your file exists!");
+        }
+        else
+        {
+            System.out.println("Your file does *NOT* exist!");
+        }
+        
+		System.exit(0); */ 
+		
 		if(args.length  != 4)
 		{
 			System.out.println("Required arguments: BSN Realm keystore_config key_alias");

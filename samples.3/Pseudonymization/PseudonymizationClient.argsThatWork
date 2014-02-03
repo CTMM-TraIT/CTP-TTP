@@ -1,1 +1,1 @@
-./PseudonymizationClient 123212321 targetCollection1 src/main/resources/resources/clientKeystore.properties submittingsite1service
+./PseudonymizationClient 123212321 targetCollection1 ttpConfig/clientKeystore.properties submittingsite1service
