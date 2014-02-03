@@ -258,6 +258,8 @@ public class PseudonymizationClient
     	}
     }
     
+    static int pseudonymInvocationCounter = 0;
+    
     static final String keystorePropertiesFile = "ttpConfig/clientKeystore.properties";
     /**
      * This method was created so that this sample can be easily hooked into other programs (like the CTP, the Clinical Trial
@@ -288,6 +290,21 @@ public class PseudonymizationClient
 
 	    throws FileNotFoundException, MalformedURLException, InternalError, DataValidationException, AccessDeniedException
     {
+    	pseudonymInvocationCounter++;
+    	
+    	if (pseudonymInvocationCounter == 100)
+    	{
+    		pseudonymInvocationCounter = 0;
+    		
+    		for (String cachedBSN : pseudonymCache.keySet())
+    		{
+    			if (pseudonymCache.get(cachedBSN).tooOld())
+    			{
+    				pseudonymCache.remove(cachedBSN);
+    			}
+    		}
+    	}
+    	
     	if (pseudonymCache.containsKey(BSN))
     	{
     		CachedPseudonyms cachedPseudonyms = pseudonymCache.get(BSN);
@@ -337,7 +354,7 @@ public class PseudonymizationClient
      */
 
     static ApplicationContext applicationContext;
-    
+        
     static
     {
     	applicationContext = new GenericXmlApplicationContext("resources/cxf-beans.xml");
