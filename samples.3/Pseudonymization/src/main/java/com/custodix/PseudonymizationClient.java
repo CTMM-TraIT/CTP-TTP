@@ -231,6 +231,7 @@ public class PseudonymizationClient {
     	}
     }
     
+    static final String keystorePropertiesFile = "ttpConfig/clientKeystore.properties";
     /**
      * This method was created so that this sample can be easily hooked into other programs (like the CTP, the Clinical Trial
      * Processor). Note that this method uses a pseudonym cache.
@@ -239,9 +240,6 @@ public class PseudonymizationClient {
      * 
      * @param realm                       The Realm, which defines the TraIT "target collection" of patients.
      * 
-     * @param clientKeyStoreProperties    A (relative or absolute) filename to the properties file that refers to the key store
-     *                                    (which would be part of the resources directory e.g. the class path of the runtime??)
-     *                                    
      * @param aliasForKey                 The alias for the key you wish to use; it is an identifier that you can find by invoking
      *                                    {@code keytool -list -keystore keystore.jks}, which lists all available keys and their
      *                                    names.
@@ -259,7 +257,6 @@ public class PseudonymizationClient {
 
     public List<String> getPseudonymForBSN(String BSN,
     									   String realm,
-			      			               String clientKeyStoreProperties,
 			      			               String aliasForKey)
 
 	    throws FileNotFoundException, MalformedURLException, InternalError, DataValidationException, AccessDeniedException
@@ -280,11 +277,11 @@ public class PseudonymizationClient {
 
     // Get the configuration file, allow absolute and relative paths
 
-	    File file = new File(clientKeyStoreProperties);
+	    File file = new File(keystorePropertiesFile);
 
 	    if (!file.exists())
 	    {
-	    	throw new FileNotFoundException(clientKeyStoreProperties);
+	    	throw new FileNotFoundException(keystorePropertiesFile);
 	    }
 
 	    setKeyConfig("file:///" + file.getAbsolutePath());
@@ -333,44 +330,17 @@ public class PseudonymizationClient {
      * An example invocation (assuming that {@code ./PseudonymizationClient} is a small shell script that calls java with the
      * proper classpath) that should work is:
      * 
-     * {@code ./PseudonymizationClient 123212321 targetCollection1 src/main/resources/resources/clientKeystore.properties submittingsite1service}
+     * {@code ./PseudonymizationClient 123212321 targetCollection1 submittingsite1service}
      *
      * @param args
      */
         
     
 	public static void main(String[] args)
-	{
-		/*
-		if (args.length < 1)
+	{		
+		if(args.length  != 3)
 		{
-			System.exit(0);
-		}
-		
-		URL wsdl = null;
-		try {
-			wsdl = new URL(args[0]);
-		} catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-        System.out.println(wsdl.getFile());
-
-        if (new File(wsdl.getFile()).isFile())
-        {
-            System.out.println("Your file exists!");
-        }
-        else
-        {
-            System.out.println("Your file does *NOT* exist!");
-        }
-        
-		System.exit(0); */ 
-		
-		if(args.length  != 4)
-		{
-			System.out.println("Required arguments: BSN Realm keystore_config key_alias");
+			System.out.println("Required arguments: BSN Realm key_alias");
 
 			return;
 		}
@@ -379,7 +349,7 @@ public class PseudonymizationClient {
 
 		try
 		{
-			List<String> pseudonyms = client.getPseudonymForBSN(args[0], args[1], args[2], args[3]);
+			List<String> pseudonyms = client.getPseudonymForBSN(args[0], args[1], args[2]);
 			
 			System.out.printf("%d pseudonym(s)...\n\n", pseudonyms.size());
 			
