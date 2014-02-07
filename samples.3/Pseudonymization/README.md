@@ -5,11 +5,15 @@ This directory contains a Clinical Trial Processor (CTP) plugin so that the CTP
 becomes able to use the Custodix TTP for properly pseudonymizing patient
 identifiers for research trials.
 
+Make sure that you use a recent version of the CTP (at least 2014.02.06 at
+11:29:32 CST, which is the build used while typing this text), since this
+plugin relies on new features added to the CTP (for facilitating this plugin).
+
 Compiling it
 ------------
 
-The `mvn compile` and `mvn package` commands, when executed in this project root
-directory, yields a `target/` directory that contains the
+The `mvn compile` and `mvn package` commands, when executed in this project
+root directory, yields a `target/` directory that contains the
 `PseudonymizationSample-1.0-SNAPSHOT.jar` file; its dependencies are
 conveniently copied to the `target/dependency-jars` directory.
 
@@ -22,7 +26,7 @@ the `target/dependency-jars` directory to the `libraries` directory of
 the CTP installation directory as well. The files you **must** skip are...
 
   *  `target/dependency-jars/ctplib-1.0.jar` (This is a "mavenized" copy of
-     the `CTP.jar` file which should already a part of the CTP. Adding it twice
+     the `CTP.jar` file which should already be part of the CTP. Adding it twice
      (albeit with a different jar name) seems very unwise.
 
   *  `target/dependency-jars/log4j-1.2.17.jar` (Log4j is already included in
@@ -33,18 +37,27 @@ the CTP installation directory as well. The files you **must** skip are...
 Using it
 --------
 
-Add the following directive to your `config.xml` file that drives your CTP
-pipeline:
+You need to create a `ttpConfig/` directory with all Custodix-specific
+credentials in order to gain access to the Custodix TTP. See the documentation
+in `src/main/java/com/custodix/PseudonymizationClient.java` for information
+about the contents of this directory.
+
+Add the following directive to the `config.xml` file of your CTP installation,
+directly inside the `<Configuration>` toplevel element (I put it between the
+`<Server>` and `<Pipeline>` element):
+
 
 ```xml
-<Plugin class="com.custodix.PseudonymizationCtpPlugin" />
+<Plugin class="com.custodix.PseudonymizationCtpPlugin"
+           id="ttpLookup"
+         name="PseudonymizationCtpPlugin"
+       prefix="PREFIX-"
+         root="roots/PseudonymizationCtpPlugin" />
 ```
 
-In the "*DICOM Anonymizer*"-section of the web GUI, 
-
-@call(ttpLookup)
-
-The "signature" of the call is...
+The "*DICOM Anonymizer*"-section of the web GUI now allows you to perform
+pseudonymization lookups via the Custodix TTP with the `@call(ttpLookup, ...)`
+function. The "signature" of the call is...
 
 ```
 @call(ttpLookup,source,realm,aliasForKey)
@@ -60,7 +73,8 @@ The "*alias for key*" is more or less the name of the account that creates the
 pseudonimized aliases for you in the first place (an example that worked
 for Maastro Clinic is `submittingsite1service`).
 
+An example call (that worked for Maastro Clinic) would be...
 
-
-
-@param(@SHORTNAME).@call(ttpLookup(PatientID,targetCollection1,submittingsite1service)
+```
+@param(@SHORTNAME).@call(ttpLookup,this,targetCollection1,submittingsite1service)
+```
