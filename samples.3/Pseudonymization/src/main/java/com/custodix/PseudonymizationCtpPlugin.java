@@ -20,19 +20,19 @@ public class PseudonymizationCtpPlugin extends AbstractPlugin implements Anonymi
 
 	@Override public String call(FnCall fn) throws Exception
 	{
-		String BSN         = fn.context.contents(fn.args[1].trim(), fn.thisTag);
-		String realm       = fn.args[2].trim();
-		String aliasForKey = fn.args[3].trim();
-
-		logger.info(String.format("Pseudonymizing '%s' for realm '%s', aliasForKey '%s'", BSN, realm, aliasForKey));
-
-	 // logger.warn("'" + fn.args[1] + "' => '" + fn.context.contents(fn.args[1].trim(), fn.thisTag) + "'");
-
 		if (fn.args.length < 4)
 		{
 			throw new Exception("!quarantine! - too few arguments provided to ttpLookup\n");
 		}
-		    
+
+     // logger.warn("'" + fn.args[1] + "' => '" + fn.context.contents(fn.args[1].trim(), fn.thisTag) + "'");
+
+		String BSN         = fn.context.contents(fn.args[1].trim(), fn.thisTag);
+		String realm       = fn.args[2].trim();
+		String aliasForKey = fn.args[3].trim();
+
+		logger.info(String.format("Pseudonymizing '%s' for realm '%s', aliasForKey '%s'", BSN, realm, aliasForKey));		
+		
 		try
 		{
 			PseudonymizationClient client = PseudonymizationClient.getClient();

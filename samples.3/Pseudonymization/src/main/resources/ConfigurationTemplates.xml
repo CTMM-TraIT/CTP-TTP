@@ -1,0 +1,24 @@
+<TemplateDefinitions>
+  <Components>
+    <Plugin>
+
+      <attr name="name"
+        required="yes"
+         default="PseudonymizationCtpPlugin"/>
+
+      <attr name="class"
+        required="yes"
+         default="com.custodix.PseudonymizationCtpPlugin"
+        editable="no"/>
+
+      <attr name="id"
+        required="yes"
+         default="ttpLookup"/>
+
+      <attr name="root"
+        required="yes"
+         default="roots/PseudonymizationCtpPlugin"/>
+
+    </Plugin>
+  </Components>
+</TemplateDefinitions>
