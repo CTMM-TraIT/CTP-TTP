@@ -53,7 +53,7 @@
 		<repository>
         <id>Maastro SDT</id>
         <name>Maastro SDT-releases</name>
-        <url>http://dev-maven.ad.maastro.nl/artifactory/repo</url>
+        <url>http://as-devtools-01-p:9081/artifactory/repo</url>
     </repository>
 	</repositories>
 
